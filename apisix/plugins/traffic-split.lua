@@ -265,6 +265,12 @@ local function new_rr_obj(weighted_upstreams)
             upstream_obj.upstream = "empty_upstream"
         end
 
+        if upstream_obj.upstream_id then
+            local key = "/upstreams/" .. upstream_obj.upstream_id
+            local res, err = core.etcd.get(key, true)
+            upstream_obj.upstream = res.body.node.value
+        end
+
         if type(upstream_obj.upstream) == "table" then
             -- Add a virtual id field to uniquely identify the upstream `key`.
             upstream_obj.upstream.vid = i
