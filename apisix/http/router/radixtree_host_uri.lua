@@ -125,7 +125,7 @@ end
 function _M.match(api_ctx)
     local user_routes = _M.user_routes
     if not cached_version or cached_version ~= user_routes.conf_version then
-        create_radixtree_router(user_routes.values)
+        create_radixtree_router(user_routes.values) -- 创建用户定义的router就是etcd里配置的router
         cached_version = user_routes.conf_version
     end
 
@@ -138,6 +138,14 @@ function _M.match(api_ctx)
 
     if host_router then
         local host_uri = api_ctx.var.host
+        -- dispatch
+        -- syntax: ok = rx:dispatch(path, opts, ...)
+        -- - path: client request path.
+        -- - opts: a Lua table (optional).
+        --     method: optional, method name of client request.
+        --     host: optional, client request host.
+        --     remote_addr: optional, client remote address like 192.168.1.100.
+        --     vars: optional, a Lua table to fetch variable, default value is ngx.var to fetch Nginx builtin variable.
         local ok = host_router:dispatch(host_uri:reverse(), match_opts, api_ctx, match_opts)
         if ok then
             return true

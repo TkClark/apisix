@@ -79,7 +79,7 @@ local function new_lru_fun(opts)
     local item_release = opts and opts.release
     local invalid_stale = opts and opts.invalid_stale
     local serial_creating = opts and opts.serial_creating
-    local lru_obj = lru_new(item_count)
+    local lru_obj = lru_new(item_count) -- 新建lrucache
 
     return function (key, version, create_obj_fun, ...)
         if not serial_creating or not can_yield_phases[get_phase()] then

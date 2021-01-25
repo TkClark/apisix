@@ -155,7 +155,7 @@ local function plugins_eq(old, new)
     return true
 end
 
-
+-- 加载配置插件（热加载时也会用，注册在resty的event中）
 local function load(plugin_names)
     local processed = {}
     for _, name in ipairs(plugin_names) do

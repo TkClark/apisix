@@ -86,7 +86,7 @@ local function readdir(etcd_cli, key)
         return nil, "not inited"
     end
 
-    local res, err = etcd_cli:readdir(key)
+    local res, err = etcd_cli:readdir(key)  -- 读取etcd的Key
     if not res then
         -- log.error("failed to get key from etcd: ", err)
         return nil, err
@@ -113,7 +113,7 @@ local function waitdir(etcd_cli, key, modified_index, timeout)
     opts.start_revision = modified_index
     opts.timeout = timeout
     opts.need_cancel = true
-    local res_func, func_err, http_cli = etcd_cli:watchdir(key, opts)
+    local res_func, func_err, http_cli = etcd_cli:watchdir(key, opts) -- 监听配置
     if not res_func then
         return nil, func_err
     end
@@ -167,7 +167,7 @@ function _M.upgrade_version(self, new_ver)
     return
 end
 
-
+-- 同步数据 一般是开启了etcd监听的
 local function sync_data(self)
     if not self.key then
         return nil, "missing 'key' arguments"
@@ -233,7 +233,7 @@ local function sync_data(self)
                 item.clean_handlers = {}
 
                 if self.filter then
-                    self.filter(item)
+                    self.filter(item)   -- 筛选配置：一般会core.table.new 创建后 insert 写入 core.tale.insert 将参数格式化成 需要的配置
                 end
             end
 
@@ -301,7 +301,7 @@ local function sync_data(self)
         self.need_reload = false
         return true
     end
-
+    -- 确认配置无误更新配置
     local dir_res, err = waitdir(self.etcd_cli, self.key, self.prev_index + 1, self.timeout)
     log.info("waitdir key: ", self.key, " prev_index: ", self.prev_index + 1)
     log.info("res: ", json.delay_encode(dir_res, true))
@@ -503,7 +503,7 @@ do
     end
 end
 
-
+-- 设置定时器进行监听（实际是循环次执行的轻线程）加了锁逻辑
 local function _automatic_fetch(premature, self)
     if premature then
         return
@@ -607,7 +607,7 @@ function _M.new(key, opts)
         if not key then
             return nil, "missing `key` argument"
         end
-
+        -- 定时任务
         ngx_timer_at(0, _automatic_fetch, obj)
 
     else
@@ -619,7 +619,7 @@ function _M.new(key, opts)
     end
 
     if key then
-        created_obj[key] = obj
+        created_obj[key] = obj  -- 全局缓存 etcd 的key 和 参数
     end
 
     return obj

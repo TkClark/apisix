@@ -120,7 +120,7 @@ end
 
 
 function _M.init_worker(filter)
-    local user_routes, err = core.config.new("/routes", {
+    local user_routes, err = core.config.new("/routes", { -- 开启监听
             automatic = true,
             item_schema = core.schema.route,
             checker = check_route,

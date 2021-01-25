@@ -97,7 +97,7 @@ do
 function _M.match(uri)
     if cached_version ~= plugin_mod.load_times then
         local err
-        router, err = fetch_control_api_router()
+        router, err = fetch_control_api_router()  -- 获取路由
         if router == nil then
             core.log.error("failed to fetch valid api router: ", err)
             return false

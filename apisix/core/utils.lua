@@ -79,7 +79,7 @@ function _M.split_uri(uri)
     return ngx_re.split(uri, "/")
 end
 
-
+-- 解析DNS
 local function dns_parse(domain, resolvers)
     resolvers = resolvers or _M.resolvers
     local r, err = resolver:new{

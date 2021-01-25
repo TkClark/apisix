@@ -73,7 +73,7 @@ local function filter(route)
     core.log.info("filter route: ", core.json.delay_encode(route, true))
 end
 
-
+-- 加载自定义路由，radixtree_host_uri.lua 没有需要的执行的方法, 会添加默认的init_worker方法
 -- attach common methods if the router doesn't provide its custom implementation
 local function attach_http_router_common_methods(http_router)
     if http_router.routes == nil then
@@ -89,7 +89,7 @@ local function attach_http_router_common_methods(http_router)
 
     if http_router.init_worker == nil then
         http_router.init_worker = function (filter)
-            http_router.user_routes = http_route.init_worker(filter)
+            http_router.user_routes = http_route.init_worker(filter) -- apisix.http.route 新建 etcd /routes， value 暂时为空
         end
     end
 end
@@ -105,9 +105,9 @@ function _M.http_init_worker()
         router_ssl_name = conf.apisix.router.ssl or router_ssl_name
     end
 
-    local router_http = require("apisix.http.router." .. router_http_name)
+    local router_http = require("apisix.http.router." .. router_http_name) -- radixtree_host_uri.lua
     attach_http_router_common_methods(router_http)
-    router_http.init_worker(filter)
+    router_http.init_worker(filter)  -- 使用公共的方法初始化 router,实际上是 etcd new
     _M.router_http = router_http
 
     local router_ssl = require("apisix.ssl.router." .. router_ssl_name)
@@ -115,7 +115,7 @@ function _M.http_init_worker()
     _M.router_ssl = router_ssl
 
     _M.api = require("apisix.api_router")
-
+    -- 创建全局路由监听
     local global_rules, err = core.config.new("/global_rules", {
             automatic = true,
             item_schema = core.schema.global_rule,

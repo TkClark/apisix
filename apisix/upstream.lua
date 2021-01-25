@@ -228,7 +228,7 @@ function _M.init_worker()
                 else
                     local new_nodes = core.table.new(core.table.nkeys(nodes), 0)
                     for addr, weight in pairs(nodes) do
-                        local host, port = core.utils.parse_addr(addr)
+                        local host, port = core.utils.parse_addr(addr)  -- 将地址端口拆分
                         if not core.utils.parse_ipv4(host) and
                                 not core.utils.parse_ipv6(host) then
                             upstream.has_domain = true

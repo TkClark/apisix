@@ -354,7 +354,7 @@ function _M.init_worker()
 
     router = route.new(uri_route)
     events = require("resty.worker.events")
-
+    -- local register = function(callback, mode, source, ...)
     events.register(reload_plugins, reload_event, "PUT")
 
     if ngx_worker_id() == 0 then

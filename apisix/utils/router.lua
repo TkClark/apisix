@@ -25,7 +25,7 @@ do
     }
 
 function _M.new(routes)
-    return resty_router.new(routes, router_opts)
+    return resty_router.new(routes, router_opts) -- 注册新的路由 resty.radixtree 高性能
 end
 
 end

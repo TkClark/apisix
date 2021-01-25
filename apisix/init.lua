@@ -105,9 +105,9 @@ function _M.http_init_worker()
     load_balancer = require("apisix.balancer").run
     require("apisix.admin.init").init_worker()
 
-    require("apisix.timers").init_worker()
+    require("apisix.timers").init_worker()  -- 初始化定时器，初始化协程？ngx.thread.spawn生成新的"light thread"，这个"light thread"运行优先级比它的父协程高，会优先运行，父协程被迫暂停。"light thread"运行结束或者yield后，再由ngx_http_lua_run_posted_threads去运行父协程。
 
-    router.http_init_worker()
+    router.http_init_worker()   -- 初始化router接口
     require("apisix.http.service").init_worker()
     plugin.init_worker()
     require("apisix.consumer").init_worker()
